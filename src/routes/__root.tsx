@@ -1,4 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { Toaster } from "sonner";
+import { OfflineBanner } from "@/components/OfflineBanner";
 
 import appCss from "../styles.css?url";
 
@@ -43,6 +45,18 @@ export const Route = createRootRoute({
         rel: "stylesheet",
         href: appCss,
       },
+      {
+        rel: "preconnect",
+        href: "https://fonts.googleapis.com",
+      },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap",
+      },
+      {
+        rel: "manifest",
+        href: "/manifest.webmanifest",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -65,5 +79,11 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  return <Outlet />;
+  return (
+    <>
+      <OfflineBanner />
+      <Outlet />
+      <Toaster position="top-center" richColors closeButton />
+    </>
+  );
 }

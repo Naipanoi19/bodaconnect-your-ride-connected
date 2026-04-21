@@ -9,38 +9,206 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as OtpRouteImport } from './routes/otp'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as DriverRouteImport } from './routes/driver'
+import { Route as CustomerRouteImport } from './routes/customer'
+import { Route as ChooseRoleRouteImport } from './routes/choose-role'
+import { Route as ChairmanRouteImport } from './routes/chairman'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DriverVerificationRouteImport } from './routes/driver.verification'
+import { Route as DriverPendingRouteImport } from './routes/driver.pending'
 
+const OtpRoute = OtpRouteImport.update({
+  id: '/otp',
+  path: '/otp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DriverRoute = DriverRouteImport.update({
+  id: '/driver',
+  path: '/driver',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomerRoute = CustomerRouteImport.update({
+  id: '/customer',
+  path: '/customer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChooseRoleRoute = ChooseRoleRouteImport.update({
+  id: '/choose-role',
+  path: '/choose-role',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChairmanRoute = ChairmanRouteImport.update({
+  id: '/chairman',
+  path: '/chairman',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DriverVerificationRoute = DriverVerificationRouteImport.update({
+  id: '/verification',
+  path: '/verification',
+  getParentRoute: () => DriverRoute,
+} as any)
+const DriverPendingRoute = DriverPendingRouteImport.update({
+  id: '/pending',
+  path: '/pending',
+  getParentRoute: () => DriverRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/chairman': typeof ChairmanRoute
+  '/choose-role': typeof ChooseRoleRoute
+  '/customer': typeof CustomerRoute
+  '/driver': typeof DriverRouteWithChildren
+  '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
+  '/otp': typeof OtpRoute
+  '/driver/pending': typeof DriverPendingRoute
+  '/driver/verification': typeof DriverVerificationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/chairman': typeof ChairmanRoute
+  '/choose-role': typeof ChooseRoleRoute
+  '/customer': typeof CustomerRoute
+  '/driver': typeof DriverRouteWithChildren
+  '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
+  '/otp': typeof OtpRoute
+  '/driver/pending': typeof DriverPendingRoute
+  '/driver/verification': typeof DriverVerificationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/chairman': typeof ChairmanRoute
+  '/choose-role': typeof ChooseRoleRoute
+  '/customer': typeof CustomerRoute
+  '/driver': typeof DriverRouteWithChildren
+  '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
+  '/otp': typeof OtpRoute
+  '/driver/pending': typeof DriverPendingRoute
+  '/driver/verification': typeof DriverVerificationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/chairman'
+    | '/choose-role'
+    | '/customer'
+    | '/driver'
+    | '/login'
+    | '/onboarding'
+    | '/otp'
+    | '/driver/pending'
+    | '/driver/verification'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/chairman'
+    | '/choose-role'
+    | '/customer'
+    | '/driver'
+    | '/login'
+    | '/onboarding'
+    | '/otp'
+    | '/driver/pending'
+    | '/driver/verification'
+  id:
+    | '__root__'
+    | '/'
+    | '/chairman'
+    | '/choose-role'
+    | '/customer'
+    | '/driver'
+    | '/login'
+    | '/onboarding'
+    | '/otp'
+    | '/driver/pending'
+    | '/driver/verification'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ChairmanRoute: typeof ChairmanRoute
+  ChooseRoleRoute: typeof ChooseRoleRoute
+  CustomerRoute: typeof CustomerRoute
+  DriverRoute: typeof DriverRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  OnboardingRoute: typeof OnboardingRoute
+  OtpRoute: typeof OtpRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/otp': {
+      id: '/otp'
+      path: '/otp'
+      fullPath: '/otp'
+      preLoaderRoute: typeof OtpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/driver': {
+      id: '/driver'
+      path: '/driver'
+      fullPath: '/driver'
+      preLoaderRoute: typeof DriverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/customer': {
+      id: '/customer'
+      path: '/customer'
+      fullPath: '/customer'
+      preLoaderRoute: typeof CustomerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/choose-role': {
+      id: '/choose-role'
+      path: '/choose-role'
+      fullPath: '/choose-role'
+      preLoaderRoute: typeof ChooseRoleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chairman': {
+      id: '/chairman'
+      path: '/chairman'
+      fullPath: '/chairman'
+      preLoaderRoute: typeof ChairmanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,21 +216,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/driver/verification': {
+      id: '/driver/verification'
+      path: '/verification'
+      fullPath: '/driver/verification'
+      preLoaderRoute: typeof DriverVerificationRouteImport
+      parentRoute: typeof DriverRoute
+    }
+    '/driver/pending': {
+      id: '/driver/pending'
+      path: '/pending'
+      fullPath: '/driver/pending'
+      preLoaderRoute: typeof DriverPendingRouteImport
+      parentRoute: typeof DriverRoute
+    }
   }
 }
 
+interface DriverRouteChildren {
+  DriverPendingRoute: typeof DriverPendingRoute
+  DriverVerificationRoute: typeof DriverVerificationRoute
+}
+
+const DriverRouteChildren: DriverRouteChildren = {
+  DriverPendingRoute: DriverPendingRoute,
+  DriverVerificationRoute: DriverVerificationRoute,
+}
+
+const DriverRouteWithChildren =
+  DriverRoute._addFileChildren(DriverRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ChairmanRoute: ChairmanRoute,
+  ChooseRoleRoute: ChooseRoleRoute,
+  CustomerRoute: CustomerRoute,
+  DriverRoute: DriverRouteWithChildren,
+  LoginRoute: LoginRoute,
+  OnboardingRoute: OnboardingRoute,
+  OtpRoute: OtpRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
