@@ -9,17 +9,37 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as RideRouteImport } from './routes/ride'
+import { Route as RateRouteImport } from './routes/rate'
 import { Route as OtpRouteImport } from './routes/otp'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as EarningsRouteImport } from './routes/earnings'
 import { Route as DriverRouteImport } from './routes/driver'
 import { Route as CustomerRouteImport } from './routes/customer'
 import { Route as ChooseRoleRouteImport } from './routes/choose-role'
 import { Route as ChairmanRouteImport } from './routes/chairman'
+import { Route as BroadcastRouteImport } from './routes/broadcast'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DriverVerificationRouteImport } from './routes/driver.verification'
 import { Route as DriverPendingRouteImport } from './routes/driver.pending'
 
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RideRoute = RideRouteImport.update({
+  id: '/ride',
+  path: '/ride',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RateRoute = RateRouteImport.update({
+  id: '/rate',
+  path: '/rate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OtpRoute = OtpRouteImport.update({
   id: '/otp',
   path: '/otp',
@@ -33,6 +53,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EarningsRoute = EarningsRouteImport.update({
+  id: '/earnings',
+  path: '/earnings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DriverRoute = DriverRouteImport.update({
@@ -55,6 +80,11 @@ const ChairmanRoute = ChairmanRouteImport.update({
   path: '/chairman',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BroadcastRoute = BroadcastRouteImport.update({
+  id: '/broadcast',
+  path: '/broadcast',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -73,38 +103,53 @@ const DriverPendingRoute = DriverPendingRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/broadcast': typeof BroadcastRoute
   '/chairman': typeof ChairmanRoute
   '/choose-role': typeof ChooseRoleRoute
   '/customer': typeof CustomerRoute
   '/driver': typeof DriverRouteWithChildren
+  '/earnings': typeof EarningsRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/otp': typeof OtpRoute
+  '/rate': typeof RateRoute
+  '/ride': typeof RideRoute
+  '/settings': typeof SettingsRoute
   '/driver/pending': typeof DriverPendingRoute
   '/driver/verification': typeof DriverVerificationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/broadcast': typeof BroadcastRoute
   '/chairman': typeof ChairmanRoute
   '/choose-role': typeof ChooseRoleRoute
   '/customer': typeof CustomerRoute
   '/driver': typeof DriverRouteWithChildren
+  '/earnings': typeof EarningsRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/otp': typeof OtpRoute
+  '/rate': typeof RateRoute
+  '/ride': typeof RideRoute
+  '/settings': typeof SettingsRoute
   '/driver/pending': typeof DriverPendingRoute
   '/driver/verification': typeof DriverVerificationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/broadcast': typeof BroadcastRoute
   '/chairman': typeof ChairmanRoute
   '/choose-role': typeof ChooseRoleRoute
   '/customer': typeof CustomerRoute
   '/driver': typeof DriverRouteWithChildren
+  '/earnings': typeof EarningsRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/otp': typeof OtpRoute
+  '/rate': typeof RateRoute
+  '/ride': typeof RideRoute
+  '/settings': typeof SettingsRoute
   '/driver/pending': typeof DriverPendingRoute
   '/driver/verification': typeof DriverVerificationRoute
 }
@@ -112,54 +157,95 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/broadcast'
     | '/chairman'
     | '/choose-role'
     | '/customer'
     | '/driver'
+    | '/earnings'
     | '/login'
     | '/onboarding'
     | '/otp'
+    | '/rate'
+    | '/ride'
+    | '/settings'
     | '/driver/pending'
     | '/driver/verification'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/broadcast'
     | '/chairman'
     | '/choose-role'
     | '/customer'
     | '/driver'
+    | '/earnings'
     | '/login'
     | '/onboarding'
     | '/otp'
+    | '/rate'
+    | '/ride'
+    | '/settings'
     | '/driver/pending'
     | '/driver/verification'
   id:
     | '__root__'
     | '/'
+    | '/broadcast'
     | '/chairman'
     | '/choose-role'
     | '/customer'
     | '/driver'
+    | '/earnings'
     | '/login'
     | '/onboarding'
     | '/otp'
+    | '/rate'
+    | '/ride'
+    | '/settings'
     | '/driver/pending'
     | '/driver/verification'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BroadcastRoute: typeof BroadcastRoute
   ChairmanRoute: typeof ChairmanRoute
   ChooseRoleRoute: typeof ChooseRoleRoute
   CustomerRoute: typeof CustomerRoute
   DriverRoute: typeof DriverRouteWithChildren
+  EarningsRoute: typeof EarningsRoute
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
   OtpRoute: typeof OtpRoute
+  RateRoute: typeof RateRoute
+  RideRoute: typeof RideRoute
+  SettingsRoute: typeof SettingsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ride': {
+      id: '/ride'
+      path: '/ride'
+      fullPath: '/ride'
+      preLoaderRoute: typeof RideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rate': {
+      id: '/rate'
+      path: '/rate'
+      fullPath: '/rate'
+      preLoaderRoute: typeof RateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/otp': {
       id: '/otp'
       path: '/otp'
@@ -179,6 +265,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/earnings': {
+      id: '/earnings'
+      path: '/earnings'
+      fullPath: '/earnings'
+      preLoaderRoute: typeof EarningsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/driver': {
@@ -207,6 +300,13 @@ declare module '@tanstack/react-router' {
       path: '/chairman'
       fullPath: '/chairman'
       preLoaderRoute: typeof ChairmanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/broadcast': {
+      id: '/broadcast'
+      path: '/broadcast'
+      fullPath: '/broadcast'
+      preLoaderRoute: typeof BroadcastRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -248,14 +348,28 @@ const DriverRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BroadcastRoute: BroadcastRoute,
   ChairmanRoute: ChairmanRoute,
   ChooseRoleRoute: ChooseRoleRoute,
   CustomerRoute: CustomerRoute,
   DriverRoute: DriverRouteWithChildren,
+  EarningsRoute: EarningsRoute,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
   OtpRoute: OtpRoute,
+  RateRoute: RateRoute,
+  RideRoute: RideRoute,
+  SettingsRoute: SettingsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
