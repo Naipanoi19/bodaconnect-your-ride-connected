@@ -10,6 +10,7 @@ interface AuthState {
   roles: Role[];
   loading: boolean;
   init: () => () => void;
+  fetchRoles: () => Promise<void>;
   setRole: (role: Role) => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -21,11 +22,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   loading: true,
 
   init: () => {
-    // Subscribe FIRST then fetch session
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       set({ session, user: session?.user ?? null });
       if (session?.user) {
-        // Defer role fetch to avoid recursive auth calls
         setTimeout(() => void get().fetchRoles(), 0);
       } else {
         set({ roles: [] });
@@ -40,7 +39,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     return () => sub.subscription.unsubscribe();
   },
 
-  // @ts-expect-error - extending state at runtime
   fetchRoles: async () => {
     const uid = get().user?.id;
     if (!uid) return;
@@ -51,9 +49,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   setRole: async (role: Role) => {
     const uid = get().user?.id;
     if (!uid) return;
-    if (role === "customer" || role === "admin") return; // assigned by system
+    if (role === "customer" || role === "admin") return;
     await supabase.from("user_roles").upsert({ user_id: uid, role }, { onConflict: "user_id,role" });
-    // @ts-expect-error
     await get().fetchRoles();
   },
 
