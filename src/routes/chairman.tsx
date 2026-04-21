@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Bell, Megaphone, BarChart3, Search, ChevronRight, Star, Bike } from "lucide-react";
+import { Bell, Megaphone, BarChart3, Search, ChevronRight, Star, Bike, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useT } from "@/lib/i18n/strings";
@@ -67,7 +67,10 @@ function ChairmanDashboard() {
           <div className="font-display text-lg">Rongai Central Stage</div>
           <div className="text-xs text-primary">{t("chairmanDashboard")}</div>
         </div>
-        <Bell size={20} />
+        <div className="flex items-center gap-3">
+          <Bell size={20} />
+          <Link to="/settings"><Settings size={20} /></Link>
+        </div>
       </header>
 
       {/* Stats */}
@@ -81,7 +84,7 @@ function ChairmanDashboard() {
       {/* Action cards */}
       <div className="px-4 grid grid-cols-2 gap-3 mb-4">
         <Link
-          to="/chairman"
+          to="/broadcast"
           className="bg-primary text-secondary rounded-2xl p-4 flex flex-col gap-1 bv-shadow-yellow active:scale-[0.98] transition-transform"
         >
           <Megaphone size={24} />
@@ -89,7 +92,7 @@ function ChairmanDashboard() {
           <div className="text-[10px] opacity-70">Send to all drivers</div>
         </Link>
         <Link
-          to="/chairman"
+          to="/earnings"
           className="bg-secondary text-white rounded-2xl p-4 flex flex-col gap-1 bv-shadow-card active:scale-[0.98] transition-transform"
         >
           <BarChart3 size={24} className="text-primary" />

@@ -1,9 +1,10 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Bell, Bike, Star, TrendingUp } from "lucide-react";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { Bell, Bike, Star, TrendingUp, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/bv/Logo";
 import { useT } from "@/lib/i18n/strings";
 import { Button } from "@/components/ui/button";
+import { OsmMap } from "@/components/bv/OsmMap";
 
 export const Route = createFileRoute("/driver")({
   head: () => ({ meta: [{ title: "Driver — BodaVert" }] }),
@@ -35,18 +36,15 @@ function DriverHome() {
             {online ? `🟢 ${t("online")}` : `⚫ ${t("offline")}`}
           </span>
           <Bell size={20} className="text-secondary" />
+          <Link to="/settings"><Settings size={20} className="text-secondary" /></Link>
         </div>
       </header>
 
-      <div className="relative flex-1 bv-bg-grey overflow-hidden">
-        <div className="absolute inset-0 opacity-50"
-          style={{
-            backgroundImage: "linear-gradient(rgba(120,140,170,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(120,140,170,.2) 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
-          }} />
+      <div className="relative flex-1 overflow-hidden">
+        <OsmMap followUser />
 
         {/* Toggle card */}
-        <div className="absolute top-4 left-4 right-4 bg-white rounded-2xl bv-shadow-elevated p-4">
+        <div className="absolute top-4 left-4 right-4 bg-white rounded-2xl bv-shadow-elevated p-4 z-[1000]">
           <div className="flex items-center justify-between">
             <div>
               <div className="font-display text-lg">{online ? "Go Offline" : "Go Online"}</div>
@@ -77,13 +75,22 @@ function DriverHome() {
           <span className="flex items-center gap-1"><Star size={12} className="text-primary" /> 4.8</span>
           <span className="flex items-center gap-1"><TrendingUp size={12} /> +12% vs yesterday</span>
         </div>
-        <Button
-          variant="outline"
-          className="w-full mt-4 h-11 rounded-xl border-primary text-primary hover:bg-primary hover:text-secondary"
-          onClick={() => navigate({ to: "/driver/verification" })}
-        >
-          Edit verification
-        </Button>
+        <div className="flex gap-2 mt-4">
+          <Button
+            variant="outline"
+            className="flex-1 h-11 rounded-xl border-primary text-primary hover:bg-primary hover:text-secondary"
+            onClick={() => navigate({ to: "/earnings" })}
+          >
+            View earnings
+          </Button>
+          <Button
+            variant="outline"
+            className="flex-1 h-11 rounded-xl border-white/30 text-white hover:bg-white/10"
+            onClick={() => navigate({ to: "/driver/verification" })}
+          >
+            Verification
+          </Button>
+        </div>
       </div>
     </div>
   );
