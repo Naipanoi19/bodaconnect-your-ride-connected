@@ -57,6 +57,10 @@ export const Route = createRootRoute({
         rel: "manifest",
         href: "/manifest.webmanifest",
       },
+      {
+        rel: "stylesheet",
+        href: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
+      },
     ],
   }),
   shellComponent: RootShell,
