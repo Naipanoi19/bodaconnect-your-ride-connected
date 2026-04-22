@@ -22,21 +22,48 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   loading: true,
 
   init: () => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      set({ session, user: session?.user ?? null });
-      if (session?.user) {
-        setTimeout(() => void get().fetchRoles(), 0);
-      } else {
-        set({ roles: [] });
-      }
-    });
+    // SSR guard — auth only runs in the browser
+    if (typeof window === "undefined") {
+      set({ loading: false });
+      return () => {};
+    }
 
-    void supabase.auth.getSession().then(({ data: { session } }) => {
-      set({ session, user: session?.user ?? null, loading: false });
-      if (session?.user) void get().fetchRoles();
-    });
+    let unsub: (() => void) | undefined;
+    try {
+      const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+        set({ session, user: session?.user ?? null, loading: false });
+        if (session?.user) {
+          setTimeout(() => void get().fetchRoles(), 0);
+        } else {
+          set({ roles: [] });
+        }
+      });
+      unsub = () => sub.subscription.unsubscribe();
 
-    return () => sub.subscription.unsubscribe();
+      supabase.auth
+        .getSession()
+        .then(({ data: { session } }) => {
+          set({ session, user: session?.user ?? null, loading: false });
+          if (session?.user) void get().fetchRoles();
+        })
+        .catch((err) => {
+          console.error("[auth] getSession failed", err);
+          set({ loading: false });
+        });
+    } catch (err) {
+      console.error("[auth] init failed", err);
+      set({ loading: false });
+    }
+
+    // Hard fallback: never stay in loading > 2.5s
+    const fallback = setTimeout(() => {
+      if (get().loading) set({ loading: false });
+    }, 2500);
+
+    return () => {
+      clearTimeout(fallback);
+      unsub?.();
+    };
   },
 
   fetchRoles: async () => {

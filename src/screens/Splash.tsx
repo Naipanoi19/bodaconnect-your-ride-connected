@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { Logo } from "@/components/bv/Logo";
@@ -9,14 +9,23 @@ export function Splash() {
   const navigate = useNavigate();
   const t = useT();
   const { user, roles, loading, init } = useAuthStore();
+  const [mounted, setMounted] = useState(false);
+  const [forceGo, setForceGo] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const cleanup = init();
-    return cleanup;
+    // Safety net: never let users sit on splash for more than 3s
+    const safety = setTimeout(() => setForceGo(true), 3000);
+    return () => {
+      clearTimeout(safety);
+      cleanup?.();
+    };
   }, [init]);
 
   useEffect(() => {
-    if (loading) return;
+    if (!mounted) return;
+    if (loading && !forceGo) return;
     const timer = setTimeout(() => {
       const onboarded = typeof window !== "undefined" && localStorage.getItem("bv-onboarded");
       if (!user) {
@@ -29,9 +38,9 @@ export function Splash() {
       else if (roles.includes("chairman")) navigate({ to: "/chairman" });
       else if (roles.includes("driver")) navigate({ to: "/driver" });
       else navigate({ to: "/customer" });
-    }, 1200);
+    }, forceGo ? 0 : 800);
     return () => clearTimeout(timer);
-  }, [loading, user, roles, navigate]);
+  }, [mounted, loading, forceGo, user, roles, navigate]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-secondary text-secondary-foreground px-6">
