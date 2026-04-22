@@ -20,6 +20,13 @@ function normalizePhone(p: string) {
   return "+254" + digits;
 }
 
+function phoneToEmail(phone: string) {
+  // Map phone to a deterministic synthetic email so we can use email+password auth
+  // (SMS provider is not configured on Lovable Cloud by default).
+  const digits = phone.replace(/\D/g, "");
+  return `bv${digits}@bodavert.app`;
+}
+
 function LoginPage() {
   const navigate = useNavigate();
   const t = useT();
@@ -28,30 +35,41 @@ function LoginPage() {
   const [showPwd, setShowPwd] = useState(false);
   const [biometric, setBiometric] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
 
-  const sendOtp = async () => {
+  const submit = async () => {
     if (phone.replace(/\D/g, "").length < 9) {
-      toast.error("Tafadhali weka nambari sahihi");
+      toast.error("Tafadhali weka nambari sahihi (9 digits)");
+      return;
+    }
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters");
       return;
     }
     setLoading(true);
     const fullPhone = normalizePhone(phone);
+    const email = phoneToEmail(fullPhone);
     try {
-      const { error } = await supabase.auth.signInWithOtp({ phone: fullPhone });
-      if (error) throw error;
-      toast.success("OTP imetumwa kwa " + fullPhone);
-      navigate({ to: "/otp", search: { phone: fullPhone } });
-    } catch (err) {
-      const msg = (err as Error).message;
-      // Phone provider may not be enabled; fall back to demo flow with email-style anonymous
-      if (msg.toLowerCase().includes("phone") || msg.toLowerCase().includes("provider")) {
-        toast.message("SMS provider not configured", {
-          description: "Using demo flow — tap Verify with any 6-digit code.",
+      if (mode === "signup") {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/choose-role`,
+            data: { phone: fullPhone },
+          },
         });
-        navigate({ to: "/otp", search: { phone: fullPhone } });
+        if (error) throw error;
+        toast.success("Karibu BodaVert! 🎉 Account imeundwa");
+        navigate({ to: "/choose-role" });
       } else {
-        toast.error(sheng.loginFail, { description: msg });
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        toast.success("Karibu tena! 👋");
+        navigate({ to: "/choose-role" });
       }
+    } catch (err) {
+      toast.error(sheng.loginFail, { description: (err as Error).message });
     } finally {
       setLoading(false);
     }
@@ -69,8 +87,12 @@ function LoginPage() {
 
       {/* Card */}
       <div className="flex-1 -mt-8 bg-background rounded-t-[32px] px-6 pt-8 pb-8 bv-shadow-elevated relative">
-        <h2 className="font-display text-2xl">{t("welcomeBack")}</h2>
-        <p className="bv-text-grey text-sm mt-1 mb-6">{t("signInToContinue")}</p>
+        <h2 className="font-display text-2xl">
+          {mode === "signup" ? "Create account" : t("welcomeBack")}
+        </h2>
+        <p className="bv-text-grey text-sm mt-1 mb-6">
+          {mode === "signup" ? "Jiunge na BodaVert leo" : t("signInToContinue")}
+        </p>
 
         <div className="space-y-4">
           <div className="relative">
@@ -105,18 +127,18 @@ function LoginPage() {
             </button>
           </div>
 
-          <div className="text-right">
-            <Link to="/login" className="text-sm bv-text-grey hover:text-foreground">
-              {t("forgotPassword")}
-            </Link>
-          </div>
-
           <Button
-            onClick={sendOtp}
+            onClick={submit}
             disabled={loading}
             className="w-full h-14 text-base font-semibold rounded-xl bv-shadow-yellow"
           >
-            {loading ? <Loader2 className="animate-spin" /> : t("continueWithSms")}
+            {loading ? (
+              <Loader2 className="animate-spin" />
+            ) : mode === "signup" ? (
+              "Sign Up"
+            ) : (
+              "Sign In"
+            )}
           </Button>
 
           <div className="flex items-center gap-3 my-2">
@@ -125,8 +147,12 @@ function LoginPage() {
             <div className="h-px flex-1 bg-border" />
           </div>
 
-          <Button variant="outline" className="w-full h-12 rounded-xl border-2 border-secondary">
-            {t("signUp")}
+          <Button
+            variant="outline"
+            onClick={() => setMode(mode === "signup" ? "signin" : "signup")}
+            className="w-full h-12 rounded-xl border-2 border-secondary"
+          >
+            {mode === "signup" ? "I already have an account" : t("signUp")}
           </Button>
 
           <button
