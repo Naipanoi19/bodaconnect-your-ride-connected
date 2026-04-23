@@ -18,10 +18,12 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as EarningsRouteImport } from './routes/earnings'
 import { Route as DriverRouteImport } from './routes/driver'
+import { Route as DevRouteImport } from './routes/dev'
 import { Route as CustomerRouteImport } from './routes/customer'
 import { Route as ChooseRoleRouteImport } from './routes/choose-role'
 import { Route as ChairmanRouteImport } from './routes/chairman'
 import { Route as BroadcastRouteImport } from './routes/broadcast'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DriverVerificationRouteImport } from './routes/driver.verification'
 import { Route as DriverPendingRouteImport } from './routes/driver.pending'
@@ -72,6 +74,11 @@ const DriverRoute = DriverRouteImport.update({
   path: '/driver',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DevRoute = DevRouteImport.update({
+  id: '/dev',
+  path: '/dev',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CustomerRoute = CustomerRouteImport.update({
   id: '/customer',
   path: '/customer',
@@ -90,6 +97,11 @@ const ChairmanRoute = ChairmanRouteImport.update({
 const BroadcastRoute = BroadcastRouteImport.update({
   id: '/broadcast',
   path: '/broadcast',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -115,10 +127,12 @@ const CustomerSearchRoute = CustomerSearchRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/broadcast': typeof BroadcastRoute
   '/chairman': typeof ChairmanRoute
   '/choose-role': typeof ChooseRoleRoute
   '/customer': typeof CustomerRouteWithChildren
+  '/dev': typeof DevRoute
   '/driver': typeof DriverRouteWithChildren
   '/earnings': typeof EarningsRoute
   '/login': typeof LoginRoute
@@ -134,10 +148,12 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/broadcast': typeof BroadcastRoute
   '/chairman': typeof ChairmanRoute
   '/choose-role': typeof ChooseRoleRoute
   '/customer': typeof CustomerRouteWithChildren
+  '/dev': typeof DevRoute
   '/driver': typeof DriverRouteWithChildren
   '/earnings': typeof EarningsRoute
   '/login': typeof LoginRoute
@@ -154,10 +170,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/broadcast': typeof BroadcastRoute
   '/chairman': typeof ChairmanRoute
   '/choose-role': typeof ChooseRoleRoute
   '/customer': typeof CustomerRouteWithChildren
+  '/dev': typeof DevRoute
   '/driver': typeof DriverRouteWithChildren
   '/earnings': typeof EarningsRoute
   '/login': typeof LoginRoute
@@ -175,10 +193,12 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/broadcast'
     | '/chairman'
     | '/choose-role'
     | '/customer'
+    | '/dev'
     | '/driver'
     | '/earnings'
     | '/login'
@@ -194,10 +214,12 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/broadcast'
     | '/chairman'
     | '/choose-role'
     | '/customer'
+    | '/dev'
     | '/driver'
     | '/earnings'
     | '/login'
@@ -213,10 +235,12 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/broadcast'
     | '/chairman'
     | '/choose-role'
     | '/customer'
+    | '/dev'
     | '/driver'
     | '/earnings'
     | '/login'
@@ -233,10 +257,12 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   BroadcastRoute: typeof BroadcastRoute
   ChairmanRoute: typeof ChairmanRoute
   ChooseRoleRoute: typeof ChooseRoleRoute
   CustomerRoute: typeof CustomerRouteWithChildren
+  DevRoute: typeof DevRoute
   DriverRoute: typeof DriverRouteWithChildren
   EarningsRoute: typeof EarningsRoute
   LoginRoute: typeof LoginRoute
@@ -313,6 +339,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DriverRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dev': {
+      id: '/dev'
+      path: '/dev'
+      fullPath: '/dev'
+      preLoaderRoute: typeof DevRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/customer': {
       id: '/customer'
       path: '/customer'
@@ -339,6 +372,13 @@ declare module '@tanstack/react-router' {
       path: '/broadcast'
       fullPath: '/broadcast'
       preLoaderRoute: typeof BroadcastRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -399,10 +439,12 @@ const DriverRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   BroadcastRoute: BroadcastRoute,
   ChairmanRoute: ChairmanRoute,
   ChooseRoleRoute: ChooseRoleRoute,
   CustomerRoute: CustomerRouteWithChildren,
+  DevRoute: DevRoute,
   DriverRoute: DriverRouteWithChildren,
   EarningsRoute: EarningsRoute,
   LoginRoute: LoginRoute,

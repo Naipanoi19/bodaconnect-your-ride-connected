@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, Phone, Share2, Navigation, MapPin, Flag } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,9 @@ import { OsmMap, type MapMarker } from "@/components/bv/OsmMap";
 import { useT, sheng } from "@/lib/i18n/strings";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthStore } from "@/store/authStore";
+import { RONGAI_CENTER, type MockDriver } from "@/lib/mock/drivers";
+import type { PlaceResult } from "@/lib/services/nominatim";
+import { fareFromDistance, getRoute } from "@/lib/services/osrm";
 
 export const Route = createFileRoute("/ride")({
   head: () => ({ meta: [{ title: "Active ride — BodaVert" }] }),
@@ -21,8 +24,29 @@ function RideScreen() {
   const { user } = useAuthStore();
   const [phase, setPhase] = useState<Phase>("matching");
   const [holdProgress, setHoldProgress] = useState(0);
-  const [userLoc, setUserLoc] = useState<[number, number]>([-1.2921, 36.8219]);
-  const [driverLoc, setDriverLoc] = useState<[number, number]>([-1.2935, 36.8235]);
+  const [userLoc, setUserLoc] = useState<[number, number]>(RONGAI_CENTER);
+  const [driver, setDriver] = useState<MockDriver | null>(null);
+  const [dropoff, setDropoff] = useState<PlaceResult | null>(null);
+  const [driverLoc, setDriverLoc] = useState<[number, number]>([RONGAI_CENTER[0] + 0.005, RONGAI_CENTER[1] + 0.005]);
+  const [route, setRoute] = useState<Array<[number, number]> | null>(null);
+  const [routeMeta, setRouteMeta] = useState<{ km: number; mins: number } | null>(null);
+  const holdInterval = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Hydrate active driver + dropoff from localStorage
+  useEffect(() => {
+    try {
+      const d = localStorage.getItem("bv-active-driver");
+      if (d) {
+        const parsed = JSON.parse(d) as MockDriver;
+        setDriver(parsed);
+        setDriverLoc([parsed.lat, parsed.lng]);
+      }
+      const drop = localStorage.getItem("bv-dropoff");
+      if (drop) setDropoff(JSON.parse(drop) as PlaceResult);
+    } catch {
+      /* noop */
+    }
+  }, []);
 
   // Geolocation
   useEffect(() => {
@@ -57,13 +81,29 @@ function RideScreen() {
     return () => clearInterval(interval);
   }, [phase, userLoc]);
 
-  const markers: MapMarker[] = useMemo(
-    () => [
+  // OSRM route from user to dropoff
+  useEffect(() => {
+    if (!dropoff) return;
+    const ctrl = new AbortController();
+    void (async () => {
+      const r = await getRoute(userLoc, [dropoff.lat, dropoff.lng], ctrl.signal);
+      if (r) {
+        setRoute(r.coords);
+        setRouteMeta({ km: r.distanceMeters / 1000, mins: Math.round(r.durationSeconds / 60) });
+      }
+    })();
+    return () => ctrl.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dropoff?.lat, dropoff?.lng]);
+
+  const markers: MapMarker[] = useMemo(() => {
+    const m: MapMarker[] = [
       { id: "user", lat: userLoc[0], lng: userLoc[1], kind: "user", label: "You" },
-      { id: "driver", lat: driverLoc[0], lng: driverLoc[1], kind: "driver", label: "Peter K." },
-    ],
-    [userLoc, driverLoc],
-  );
+      { id: "driver", lat: driverLoc[0], lng: driverLoc[1], kind: "driver", label: driver?.plate ?? "Driver" },
+    ];
+    if (dropoff) m.push({ id: "drop", lat: dropoff.lat, lng: dropoff.lng, kind: "dropoff", label: dropoff.name });
+    return m;
+  }, [userLoc, driverLoc, driver, dropoff]);
 
   const triggerPanic = async () => {
     toast.success(t("panicSent"), { description: sheng.broadcastSent });
@@ -78,23 +118,23 @@ function RideScreen() {
     } catch { /* offline ok */ }
   };
 
-  // Hold-to-panic logic
-  let holdInterval: ReturnType<typeof setInterval> | null = null;
+  // Hold-to-panic logic (3 second hold)
   const startHold = () => {
     setHoldProgress(0);
-    holdInterval = setInterval(() => {
+    if (holdInterval.current) clearInterval(holdInterval.current);
+    holdInterval.current = setInterval(() => {
       setHoldProgress((p) => {
         if (p >= 100) {
-          if (holdInterval) clearInterval(holdInterval);
+          if (holdInterval.current) clearInterval(holdInterval.current);
           void triggerPanic();
           return 0;
         }
-        return p + 8;
+        return p + 4; // ~2.5s to fill
       });
-    }, 80);
+    }, 100);
   };
   const cancelHold = () => {
-    if (holdInterval) clearInterval(holdInterval);
+    if (holdInterval.current) clearInterval(holdInterval.current);
     setHoldProgress(0);
   };
 
@@ -118,28 +158,51 @@ function RideScreen() {
       </header>
 
       <div className="relative flex-1">
-        <OsmMap markers={markers} center={userLoc} zoom={15} />
+        <OsmMap markers={markers} center={userLoc} zoom={15} routeCoords={route ?? undefined} />
       </div>
 
       {/* Driver card */}
       <div className="bg-white px-4 pt-4 pb-6 bv-shadow-elevated space-y-3">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-xl">🏍️</div>
-          <div className="flex-1">
-            <div className="font-semibold text-sm">Peter Kamau</div>
-            <div className="text-[11px] bv-text-grey">KCB 234X · ⭐ 4.9 · Bajaj Boxer</div>
+          <div className="flex-1 min-w-0">
+            <div className="font-semibold text-sm truncate">{driver?.name ?? "Finding driver…"}</div>
+            <div className="text-[11px] bv-text-grey truncate">
+              {driver ? `${driver.plate} · ⭐ ${driver.rating} · ${driver.totalRides} rides` : "Matching nearby boda"}
+            </div>
           </div>
-          <button className="w-10 h-10 rounded-full bv-bg-success text-white flex items-center justify-center">
+          <a
+            href={driver ? `tel:${driver.phone}` : undefined}
+            className="w-10 h-10 rounded-full bv-bg-success text-white flex items-center justify-center"
+          >
             <Phone size={16} />
-          </button>
-          <button className="w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center">
+          </a>
+          <button
+            onClick={() => {
+              const url = window.location.href;
+              if (navigator.share) void navigator.share({ title: "My BodaVert ride", url });
+              else {
+                void navigator.clipboard.writeText(url);
+                toast.success("Trip link copied");
+              }
+            }}
+            className="w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center"
+          >
             <Share2 size={16} />
           </button>
         </div>
 
         <div className="bv-bg-grey rounded-xl p-3 text-xs space-y-1">
-          <div className="flex items-center gap-2"><MapPin size={12} className="bv-text-success" /> Karen Shopping Center</div>
-          <div className="flex items-center gap-2"><Flag size={12} /> Junction Mall, Ngong Rd</div>
+          <div className="flex items-center gap-2"><MapPin size={12} className="bv-text-success" /> You ({userLoc[0].toFixed(4)}, {userLoc[1].toFixed(4)})</div>
+          <div className="flex items-center gap-2"><Flag size={12} /> {dropoff?.name ?? "No destination set"}</div>
+          {routeMeta && (
+            <div className="flex items-center gap-2 pt-1 border-t border-border/50 mt-1">
+              <Navigation size={12} className="text-primary" />
+              <span>
+                {routeMeta.km.toFixed(1)} km · {routeMeta.mins} min · KSh {fareFromDistance(routeMeta.km * 1000).min}–{fareFromDistance(routeMeta.km * 1000).max}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Panic */}
