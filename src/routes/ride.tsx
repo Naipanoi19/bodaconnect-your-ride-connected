@@ -168,7 +168,7 @@ function RideScreen() {
           <div className="flex-1 min-w-0">
             <div className="font-semibold text-sm truncate">{driver?.name ?? "Finding driver…"}</div>
             <div className="text-[11px] bv-text-grey truncate">
-              {driver ? `${driver.plate} · ⭐ ${driver.rating} · ${driver.bike}` : "Matching nearby boda"}
+              {driver ? `${driver.plate} · ⭐ ${driver.rating} · ${driver.totalRides} rides` : "Matching nearby boda"}
             </div>
           </div>
           <a
