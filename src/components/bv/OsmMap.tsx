@@ -15,6 +15,8 @@ interface Props {
   markers?: MapMarker[];
   className?: string;
   onMapClick?: (lat: number, lng: number) => void;
+  onMarkerClick?: (markerId: string) => void;
+  routeCoords?: Array<[number, number]>;
   followUser?: boolean;
 }
 
@@ -51,11 +53,14 @@ export function OsmMap({
   markers = [],
   className,
   onMapClick,
+  onMarkerClick,
+  routeCoords,
   followUser,
 }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const layerRef = useRef<L.LayerGroup | null>(null);
+  const routeLayerRef = useRef<L.Polyline | null>(null);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -99,9 +104,28 @@ export function OsmMap({
       const icon = ICONS[m.kind ?? "driver"];
       const marker = L.marker([m.lat, m.lng], { icon });
       if (m.label) marker.bindTooltip(m.label, { direction: "top", offset: [0, -10] });
+      if (onMarkerClick) {
+        marker.on("click", () => onMarkerClick(m.id));
+      }
       marker.addTo(layerRef.current!);
     });
-  }, [markers]);
+  }, [markers, onMarkerClick]);
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+    if (routeLayerRef.current) {
+      routeLayerRef.current.remove();
+      routeLayerRef.current = null;
+    }
+    if (routeCoords && routeCoords.length > 1) {
+      routeLayerRef.current = L.polyline(routeCoords, {
+        color: "#FFCA28",
+        weight: 5,
+        opacity: 0.95,
+        dashArray: "10 8",
+      }).addTo(mapRef.current);
+    }
+  }, [routeCoords]);
 
   return <div ref={containerRef} className={className ?? "absolute inset-0"} />;
 }

@@ -41,7 +41,7 @@ function ChooseRolePage() {
 
       <div className="flex flex-col gap-4 mt-4">
         <RoleCard
-          onClick={() => choose("customer", "/customer")}
+          onClick={() => choose("customer", "/permissions")}
           bg="bg-white"
           iconBg="bg-primary"
           iconColor="text-secondary"
