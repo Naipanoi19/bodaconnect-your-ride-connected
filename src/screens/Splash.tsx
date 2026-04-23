@@ -33,8 +33,8 @@ export function Splash() {
         else navigate({ to: "/login" });
         return;
       }
-      // Logged in — route by role
-      if (roles.includes("admin")) navigate({ to: "/chairman" });
+      // Logged in — route by role (admin > chairman > driver > customer)
+      if (roles.includes("admin")) navigate({ to: "/admin" });
       else if (roles.includes("chairman")) navigate({ to: "/chairman" });
       else if (roles.includes("driver")) navigate({ to: "/driver" });
       else navigate({ to: "/customer" });

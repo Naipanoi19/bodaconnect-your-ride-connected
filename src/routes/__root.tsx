@@ -1,25 +1,33 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { Toaster } from "sonner";
 import { OfflineBanner } from "@/components/OfflineBanner";
+import { InstallPrompt } from "@/components/bv/InstallPrompt";
 
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+    <div className="flex min-h-screen flex-col items-center justify-center bg-secondary text-white px-6">
+      <div className="max-w-md text-center bv-fade-up">
+        <div className="text-7xl">🏍️💨</div>
+        <h1 className="text-6xl font-display text-primary mt-2">404</h1>
+        <h2 className="mt-3 text-xl font-display">Eish! Hii page imepotea</h2>
+        <p className="mt-2 text-sm text-white/60">
+          The page you're looking for took a detour. Let's get you back on the road.
         </p>
-        <div className="mt-6">
+        <div className="mt-6 flex gap-2 justify-center">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-secondary bv-shadow-yellow"
           >
-            Go home
+            🏠 Go home
           </Link>
+          <button
+            onClick={() => typeof window !== "undefined" && window.location.reload()}
+            className="inline-flex items-center justify-center rounded-xl border border-white/20 px-5 py-3 text-sm font-medium text-white"
+          >
+            🔄 Refresh
+          </button>
         </div>
       </div>
     </div>
@@ -87,6 +95,7 @@ function RootComponent() {
     <>
       <OfflineBanner />
       <Outlet />
+      <InstallPrompt />
       <Toaster position="top-center" richColors closeButton />
     </>
   );
