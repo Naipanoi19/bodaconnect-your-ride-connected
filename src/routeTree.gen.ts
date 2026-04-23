@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RideRouteImport } from './routes/ride'
 import { Route as RateRouteImport } from './routes/rate'
+import { Route as PermissionsRouteImport } from './routes/permissions'
 import { Route as OtpRouteImport } from './routes/otp'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
@@ -38,6 +39,11 @@ const RideRoute = RideRouteImport.update({
 const RateRoute = RateRouteImport.update({
   id: '/rate',
   path: '/rate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PermissionsRoute = PermissionsRouteImport.update({
+  id: '/permissions',
+  path: '/permissions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OtpRoute = OtpRouteImport.update({
@@ -112,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/otp': typeof OtpRoute
+  '/permissions': typeof PermissionsRoute
   '/rate': typeof RateRoute
   '/ride': typeof RideRoute
   '/settings': typeof SettingsRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/otp': typeof OtpRoute
+  '/permissions': typeof PermissionsRoute
   '/rate': typeof RateRoute
   '/ride': typeof RideRoute
   '/settings': typeof SettingsRoute
@@ -147,6 +155,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/otp': typeof OtpRoute
+  '/permissions': typeof PermissionsRoute
   '/rate': typeof RateRoute
   '/ride': typeof RideRoute
   '/settings': typeof SettingsRoute
@@ -166,6 +175,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/otp'
+    | '/permissions'
     | '/rate'
     | '/ride'
     | '/settings'
@@ -183,6 +193,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/otp'
+    | '/permissions'
     | '/rate'
     | '/ride'
     | '/settings'
@@ -200,6 +211,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/otp'
+    | '/permissions'
     | '/rate'
     | '/ride'
     | '/settings'
@@ -218,6 +230,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
   OtpRoute: typeof OtpRoute
+  PermissionsRoute: typeof PermissionsRoute
   RateRoute: typeof RateRoute
   RideRoute: typeof RideRoute
   SettingsRoute: typeof SettingsRoute
@@ -244,6 +257,13 @@ declare module '@tanstack/react-router' {
       path: '/rate'
       fullPath: '/rate'
       preLoaderRoute: typeof RateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/permissions': {
+      id: '/permissions'
+      path: '/permissions'
+      fullPath: '/permissions'
+      preLoaderRoute: typeof PermissionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/otp': {
@@ -357,6 +377,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
   OtpRoute: OtpRoute,
+  PermissionsRoute: PermissionsRoute,
   RateRoute: RateRoute,
   RideRoute: RideRoute,
   SettingsRoute: SettingsRoute,
