@@ -11,10 +11,11 @@ export const Route = createFileRoute("/admin")({
   component: AdminDashboard,
 });
 
+type StageStatus = "pending" | "active" | "inactive";
 type StageRow = {
   id: string;
   stage_name: string;
-  status: "pending" | "active" | "suspended";
+  status: StageStatus;
   total_drivers: number;
   chairman_id: string | null;
 };
@@ -62,12 +63,12 @@ function AdminDashboard() {
   };
 
   const suspendStage = async (id: string) => {
-    const { error } = await supabase.from("stages").update({ status: "suspended" }).eq("id", id);
+    const { error } = await supabase.from("stages").update({ status: "inactive" }).eq("id", id);
     if (error) {
       toast.error(error.message);
       return;
     }
-    setStages((arr) => arr.map((s) => (s.id === id ? { ...s, status: "suspended" } : s)));
+    setStages((arr) => arr.map((s) => (s.id === id ? { ...s, status: "inactive" } : s)));
     toast.success("Stage suspended");
   };
 

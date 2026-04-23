@@ -54,10 +54,11 @@ function DevTools() {
     const { email, password, route } = ACCOUNTS[p];
     try {
       // Try sign-in first
-      let { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const initial = await supabase.auth.signInWithPassword({ email, password });
+      let uid: string | undefined = initial.data?.user?.id;
 
-      // If no account, sign up
-      if (error) {
+      // If no account, sign up then retry sign-in
+      if (initial.error) {
         const signUp = await supabase.auth.signUp({
           email,
           password,
@@ -67,13 +68,10 @@ function DevTools() {
           },
         });
         if (signUp.error) throw signUp.error;
-        data = signUp.data;
-        // Try sign-in again (in case email confirmation isn't required)
+        uid = signUp.data?.user?.id;
         const retry = await supabase.auth.signInWithPassword({ email, password });
-        if (!retry.error) data = retry.data;
+        if (!retry.error && retry.data?.user?.id) uid = retry.data.user.id;
       }
-
-      const uid = data?.user?.id;
       if (!uid) {
         toast.message("Account created — confirm email to sign in", {
           description: "Disable email confirmation in backend settings for instant dev login.",
