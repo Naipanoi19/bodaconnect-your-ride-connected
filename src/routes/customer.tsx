@@ -80,7 +80,7 @@ function CustomerHome() {
     } catch {
       /* noop */
     }
-    toast.success(sheng.matched ?? "Driver requested!", { description: `${driver.name} • ETA ${driver.eta} min` });
+    toast.success("Driver requested!", { description: `${driver.name} • ETA ${driver.eta} min` });
     navigate({ to: "/ride" });
   };
 
@@ -92,7 +92,7 @@ function CustomerHome() {
     // Pick the closest driver as default
     const closest = [...MOCK_DRIVERS].sort((a, b) => distanceFromMe(a) - distanceFromMe(b))[0];
     if (!closest) {
-      toast.error(sheng.noDrivers ?? "No drivers nearby");
+      toast.error(sheng.noDrivers);
       return;
     }
     requestRide(closest);
