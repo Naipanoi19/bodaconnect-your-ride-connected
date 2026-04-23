@@ -463,7 +463,48 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_drivers: {
+        Row: {
+          current_lat: number | null
+          current_lng: number | null
+          driver_name: string | null
+          helmet_verified: boolean | null
+          is_online: boolean | null
+          last_location_update: string | null
+          rating_average: number | null
+          stage_id: string | null
+          stage_name: string | null
+          total_rides: number | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "drivers_stage_id_fkey"
+            columns: ["stage_id"]
+            isOneToOne: false
+            referencedRelation: "stages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stage_driver_contacts: {
+        Row: {
+          avatar_url: string | null
+          id: string | null
+          name: string | null
+          phone: string | null
+          stage_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "drivers_stage_id_fkey"
+            columns: ["stage_id"]
+            isOneToOne: false
+            referencedRelation: "stages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       has_role: {
