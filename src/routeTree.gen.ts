@@ -11,11 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RideRouteImport } from './routes/ride'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RateRouteImport } from './routes/rate'
 import { Route as PermissionsRouteImport } from './routes/permissions'
 import { Route as OtpRouteImport } from './routes/otp'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as EarningsRouteImport } from './routes/earnings'
 import { Route as DriverRouteImport } from './routes/driver'
 import { Route as DevRouteImport } from './routes/dev'
@@ -37,6 +39,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const RideRoute = RideRouteImport.update({
   id: '/ride',
   path: '/ride',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RateRoute = RateRouteImport.update({
@@ -62,6 +69,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EarningsRoute = EarningsRouteImport.update({
@@ -135,11 +147,13 @@ export interface FileRoutesByFullPath {
   '/dev': typeof DevRoute
   '/driver': typeof DriverRouteWithChildren
   '/earnings': typeof EarningsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/otp': typeof OtpRoute
   '/permissions': typeof PermissionsRoute
   '/rate': typeof RateRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/ride': typeof RideRoute
   '/settings': typeof SettingsRoute
   '/customer/search': typeof CustomerSearchRoute
@@ -156,11 +170,13 @@ export interface FileRoutesByTo {
   '/dev': typeof DevRoute
   '/driver': typeof DriverRouteWithChildren
   '/earnings': typeof EarningsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/otp': typeof OtpRoute
   '/permissions': typeof PermissionsRoute
   '/rate': typeof RateRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/ride': typeof RideRoute
   '/settings': typeof SettingsRoute
   '/customer/search': typeof CustomerSearchRoute
@@ -178,11 +194,13 @@ export interface FileRoutesById {
   '/dev': typeof DevRoute
   '/driver': typeof DriverRouteWithChildren
   '/earnings': typeof EarningsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/otp': typeof OtpRoute
   '/permissions': typeof PermissionsRoute
   '/rate': typeof RateRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/ride': typeof RideRoute
   '/settings': typeof SettingsRoute
   '/customer/search': typeof CustomerSearchRoute
@@ -201,11 +219,13 @@ export interface FileRouteTypes {
     | '/dev'
     | '/driver'
     | '/earnings'
+    | '/forgot-password'
     | '/login'
     | '/onboarding'
     | '/otp'
     | '/permissions'
     | '/rate'
+    | '/reset-password'
     | '/ride'
     | '/settings'
     | '/customer/search'
@@ -222,11 +242,13 @@ export interface FileRouteTypes {
     | '/dev'
     | '/driver'
     | '/earnings'
+    | '/forgot-password'
     | '/login'
     | '/onboarding'
     | '/otp'
     | '/permissions'
     | '/rate'
+    | '/reset-password'
     | '/ride'
     | '/settings'
     | '/customer/search'
@@ -243,11 +265,13 @@ export interface FileRouteTypes {
     | '/dev'
     | '/driver'
     | '/earnings'
+    | '/forgot-password'
     | '/login'
     | '/onboarding'
     | '/otp'
     | '/permissions'
     | '/rate'
+    | '/reset-password'
     | '/ride'
     | '/settings'
     | '/customer/search'
@@ -265,11 +289,13 @@ export interface RootRouteChildren {
   DevRoute: typeof DevRoute
   DriverRoute: typeof DriverRouteWithChildren
   EarningsRoute: typeof EarningsRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
   OtpRoute: typeof OtpRoute
   PermissionsRoute: typeof PermissionsRoute
   RateRoute: typeof RateRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   RideRoute: typeof RideRoute
   SettingsRoute: typeof SettingsRoute
 }
@@ -288,6 +314,13 @@ declare module '@tanstack/react-router' {
       path: '/ride'
       fullPath: '/ride'
       preLoaderRoute: typeof RideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rate': {
@@ -323,6 +356,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/earnings': {
@@ -447,11 +487,13 @@ const rootRouteChildren: RootRouteChildren = {
   DevRoute: DevRoute,
   DriverRoute: DriverRouteWithChildren,
   EarningsRoute: EarningsRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
   OtpRoute: OtpRoute,
   PermissionsRoute: PermissionsRoute,
   RateRoute: RateRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   RideRoute: RideRoute,
   SettingsRoute: SettingsRoute,
 }

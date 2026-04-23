@@ -155,6 +155,13 @@ function LoginPage() {
             {mode === "signup" ? "I already have an account" : t("signUp")}
           </Button>
 
+          <Link
+            to="/forgot-password"
+            className="block text-center text-sm text-primary font-medium pt-1"
+          >
+            {t("forgotPassword")}
+          </Link>
+
           <button
             onClick={() => setBiometric(!biometric)}
             className="w-full flex items-center justify-center gap-2 text-sm bv-text-grey pt-2"
