@@ -25,6 +25,7 @@ import { Route as BroadcastRouteImport } from './routes/broadcast'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DriverVerificationRouteImport } from './routes/driver.verification'
 import { Route as DriverPendingRouteImport } from './routes/driver.pending'
+import { Route as CustomerSearchRouteImport } from './routes/customer.search'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -106,13 +107,18 @@ const DriverPendingRoute = DriverPendingRouteImport.update({
   path: '/pending',
   getParentRoute: () => DriverRoute,
 } as any)
+const CustomerSearchRoute = CustomerSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => CustomerRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/broadcast': typeof BroadcastRoute
   '/chairman': typeof ChairmanRoute
   '/choose-role': typeof ChooseRoleRoute
-  '/customer': typeof CustomerRoute
+  '/customer': typeof CustomerRouteWithChildren
   '/driver': typeof DriverRouteWithChildren
   '/earnings': typeof EarningsRoute
   '/login': typeof LoginRoute
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/rate': typeof RateRoute
   '/ride': typeof RideRoute
   '/settings': typeof SettingsRoute
+  '/customer/search': typeof CustomerSearchRoute
   '/driver/pending': typeof DriverPendingRoute
   '/driver/verification': typeof DriverVerificationRoute
 }
@@ -130,7 +137,7 @@ export interface FileRoutesByTo {
   '/broadcast': typeof BroadcastRoute
   '/chairman': typeof ChairmanRoute
   '/choose-role': typeof ChooseRoleRoute
-  '/customer': typeof CustomerRoute
+  '/customer': typeof CustomerRouteWithChildren
   '/driver': typeof DriverRouteWithChildren
   '/earnings': typeof EarningsRoute
   '/login': typeof LoginRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/rate': typeof RateRoute
   '/ride': typeof RideRoute
   '/settings': typeof SettingsRoute
+  '/customer/search': typeof CustomerSearchRoute
   '/driver/pending': typeof DriverPendingRoute
   '/driver/verification': typeof DriverVerificationRoute
 }
@@ -149,7 +157,7 @@ export interface FileRoutesById {
   '/broadcast': typeof BroadcastRoute
   '/chairman': typeof ChairmanRoute
   '/choose-role': typeof ChooseRoleRoute
-  '/customer': typeof CustomerRoute
+  '/customer': typeof CustomerRouteWithChildren
   '/driver': typeof DriverRouteWithChildren
   '/earnings': typeof EarningsRoute
   '/login': typeof LoginRoute
@@ -159,6 +167,7 @@ export interface FileRoutesById {
   '/rate': typeof RateRoute
   '/ride': typeof RideRoute
   '/settings': typeof SettingsRoute
+  '/customer/search': typeof CustomerSearchRoute
   '/driver/pending': typeof DriverPendingRoute
   '/driver/verification': typeof DriverVerificationRoute
 }
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/rate'
     | '/ride'
     | '/settings'
+    | '/customer/search'
     | '/driver/pending'
     | '/driver/verification'
   fileRoutesByTo: FileRoutesByTo
@@ -197,6 +207,7 @@ export interface FileRouteTypes {
     | '/rate'
     | '/ride'
     | '/settings'
+    | '/customer/search'
     | '/driver/pending'
     | '/driver/verification'
   id:
@@ -215,6 +226,7 @@ export interface FileRouteTypes {
     | '/rate'
     | '/ride'
     | '/settings'
+    | '/customer/search'
     | '/driver/pending'
     | '/driver/verification'
   fileRoutesById: FileRoutesById
@@ -224,7 +236,7 @@ export interface RootRouteChildren {
   BroadcastRoute: typeof BroadcastRoute
   ChairmanRoute: typeof ChairmanRoute
   ChooseRoleRoute: typeof ChooseRoleRoute
-  CustomerRoute: typeof CustomerRoute
+  CustomerRoute: typeof CustomerRouteWithChildren
   DriverRoute: typeof DriverRouteWithChildren
   EarningsRoute: typeof EarningsRoute
   LoginRoute: typeof LoginRoute
@@ -350,8 +362,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DriverPendingRouteImport
       parentRoute: typeof DriverRoute
     }
+    '/customer/search': {
+      id: '/customer/search'
+      path: '/search'
+      fullPath: '/customer/search'
+      preLoaderRoute: typeof CustomerSearchRouteImport
+      parentRoute: typeof CustomerRoute
+    }
   }
 }
+
+interface CustomerRouteChildren {
+  CustomerSearchRoute: typeof CustomerSearchRoute
+}
+
+const CustomerRouteChildren: CustomerRouteChildren = {
+  CustomerSearchRoute: CustomerSearchRoute,
+}
+
+const CustomerRouteWithChildren = CustomerRoute._addFileChildren(
+  CustomerRouteChildren,
+)
 
 interface DriverRouteChildren {
   DriverPendingRoute: typeof DriverPendingRoute
@@ -371,7 +402,7 @@ const rootRouteChildren: RootRouteChildren = {
   BroadcastRoute: BroadcastRoute,
   ChairmanRoute: ChairmanRoute,
   ChooseRoleRoute: ChooseRoleRoute,
-  CustomerRoute: CustomerRoute,
+  CustomerRoute: CustomerRouteWithChildren,
   DriverRoute: DriverRouteWithChildren,
   EarningsRoute: EarningsRoute,
   LoginRoute: LoginRoute,
