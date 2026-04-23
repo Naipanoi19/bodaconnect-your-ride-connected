@@ -80,17 +80,18 @@ function DevTools() {
         return;
       }
 
-      // Assign role (customer is default via trigger; driver/chairman via self-assign policy)
-      if (p === "driver" || p === "chairman") {
+      // Customer role auto-assigned by signup trigger.
+      // Driver can self-assign via RLS policy.
+      if (p === "driver") {
         await supabase.from("user_roles").upsert(
-          { user_id: uid, role: p },
+          { user_id: uid, role: "driver" },
           { onConflict: "user_id,role" },
         );
       }
-      // Admin role can't be self-assigned (RLS); show note
-      if (p === "admin") {
-        toast.message("Admin role must be granted in backend", {
-          description: "Test account signed in but admin permissions are RLS-gated.",
+      // Chairman & admin require admin grant (cannot self-assign for security).
+      if (p === "chairman" || p === "admin") {
+        toast.message(`${p} role requires admin grant`, {
+          description: "Test account signed in. Ask backend admin to add the role to user_roles.",
         });
       }
 
